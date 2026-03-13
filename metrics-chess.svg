@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="560" viewBox="0 0 800 560" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="680" viewBox="0 0 800 680" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">Lichess profile: marwinwijaya</desc>
-  <rect width="800" height="560" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="558" rx="19" stroke="#30363d"/>
-  <rect x="24" y="24" width="8" height="512" rx="4" fill="#2ea043"/>
-  <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Last Chess Game</text>
-  <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">Lichess profile: marwinwijaya</text>
+
+  <rect width="800" height="680" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="678" rx="19" stroke="#30363d"/>
+
+  <rect x="24" y="24" width="8" height="632" rx="4" fill="#2ea043"/>
+
+  <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">
+    Last Chess Game
+  </text>
+  <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">
+    Lichess profile: marwinwijaya
+  </text>
+
   
   <g>
     <rect x="22" y="132" width="356" height="356" rx="14" fill="#161b22" stroke="#30363d"/>
@@ -1398,16 +1406,23 @@
   <animate attributeName="opacity" values="0;1;1" keyTimes="0;0.08;1" dur="1.20s" begin="15.60s" fill="freeze"/>
 </g>
   </g>
-  <text x="410" y="184" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">1. e4 e5</text>
-  <text x="410" y="212" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">2. Nf3 Nc6</text>
-  <text x="410" y="240" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">3. Nc3 d6</text>
-  <text x="410" y="268" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">4. d4 Qf6</text>
-  <text x="410" y="296" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">5. Be3 Be6</text>
-  <text x="410" y="324" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">6. dxe5 dxe5</text>
-  <text x="32" y="474" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Win as black | correspondence | standard | White vs marwinwijaya (1500)</text>
-  <text x="32" y="492" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Three Knights Opening</text>
-  <text x="32" y="510" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Recent SAN: e4 e5 Nf3 Nc6 Nc3 d6 d4 Qf6</text>
-  <text x="32" y="528" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">            Be3 Be6 dxe5 dxe5 Nd5 Bxd5 Qd3 Rd8</text>
-  <text x="32" y="546" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">            a3 Be6 Qe2 Bd6 O-O-O Nge7 Bg5 Qg6</text>
-  <text x="32" y="546" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">Status: mate | https://lichess.org/dPNPXhiX</text>
+  <text x="430" y="184" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">1. e4 e5</text>
+  <text x="430" y="214" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">2. Nf3 Nc6</text>
+  <text x="430" y="244" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">3. Nc3 d6</text>
+  <text x="430" y="274" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">4. d4 Qf6</text>
+  <text x="430" y="304" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">5. Be3 Be6</text>
+  <text x="430" y="334" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">6. dxe5 dxe5</text>
+  <text x="430" y="364" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">7. Nd5 Bxd5</text>
+  <text x="430" y="394" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">8. Qd3 Rd8</text>
+  <text x="32" y="538" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Win as black | correspondence | standard | White vs</text>
+  <text x="32" y="560" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">marwinwijaya (1500)</text>
+  <text x="32" y="582" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Opening: Three Knights Opening</text>
+  <text x="32" y="604" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Recent SAN: e4 e5 Nf3 Nc6 Nc3 d6 d4 Qf6 Be3 Be6 dxe5 dxe5</text>
+  <text x="32" y="626" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Nd5 Bxd5 Qd3 Rd8 a3 Be6 Qe2 Bd6 O-O-O Nge7 Bg5 Qg6 Rd2 h6</text>
+  <text x="32" y="648" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">Be3 O-O Kb1 Qxe4 Qd3 Qxd3 cxd3 a6 h4 Nf5 g3 Nxe3 Bh3 Bxh3...</text>
+
+  <line x1="32" y1="632" x2="768" y2="632" stroke="#30363d"/>
+  <text x="32" y="656" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
+    Status: mate | https://lichess.org/dPNPXhiX
+  </text>
 </svg>
