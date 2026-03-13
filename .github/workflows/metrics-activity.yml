@@ -28,8 +28,8 @@ jobs:
           filename: metrics-activity.svg
           output_action: commit
 
-          # keep it light
-          base: header
+          # merged summary + activity card
+          base: header, activity, community, repositories, metadata
 
           # Disabled because the upstream activity plugin is currently brittle
           # with some GitHub event payloads and can fail with "unexpected error".
@@ -41,24 +41,6 @@ jobs:
           plugin_pagespeed_token: ${{ secrets.PAGESPEED_TOKEN }}
 
           # reduce size / avoid huge base64
-          config_output: svg
-          config_display: regular
-
-      - uses: lowlighter/metrics@v3.25
-        with:
-          token: ${{ secrets.METRICS_TOKEN }}
-          committer_token: ${{ secrets.METRICS_TOKEN }}
-          committer_branch: main
-
-          user: arwinwijaya
-          template: classic
-          config_timezone: Asia/Jakarta
-
-          filename: metrics-classic.svg
-          output_action: commit
-
-          base: header, activity, community, repositories, metadata
-
           config_output: svg
           config_display: regular
 

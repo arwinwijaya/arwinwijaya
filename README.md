@@ -25,8 +25,7 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
 
 <table>
   <tr>
-    <td><img src="./metrics-activity.svg" alt="Activity Metrics" /></td>
-    <td><img src="./metrics-classic.svg" alt="Classic Metrics" /></td>
+    <td colspan="2"><img src="./metrics-activity.svg" alt="Activity Metrics" /></td>
   </tr>
   <tr>
     <td colspan="2"><img src="./metrics-organization.svg" alt="Organization Metrics" /></td>
