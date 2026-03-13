@@ -25,9 +25,9 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
 
 ![Activity Metrics](./metrics-activity.svg)
 
-![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=marwinwijaya&theme=tokyo-night&hide_border=true)
+![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=arwinwijaya&theme=tokyo-night&hide_border=true)
 
-![GitHub Streak](https://streak-stats.demolab.com?user=marwinwijaya&theme=tokyonight&hide_border=true)
+![GitHub Streak](https://streak-stats.demolab.com?user=arwinwijaya&theme=tokyonight&hide_border=true)
 
 ---
 
