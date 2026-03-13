@@ -10,26 +10,27 @@ permissions:
 jobs:
   github-metrics-chess:
     runs-on: ubuntu-latest
+    env:
+      LICHESS_USER: marwinwijaya
     steps:
-      - continue-on-error: true
-        uses: lowlighter/metrics@master
+      - uses: actions/checkout@v4
         with:
-          token: NOT_NEEDED
-          committer_token: ${{ secrets.METRICS_TOKEN }}
-          committer_branch: main
+          token: ${{ secrets.METRICS_TOKEN }}
 
-          user: arwinwijaya
-          template: classic
-          config_timezone: Asia/Jakarta
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-          filename: metrics-chess.svg
-          output_action: commit
+      - name: Generate chess card
+        env:
+          CHESS_TOKEN: ${{ secrets.CHESS_TOKEN }}
+        run: node scripts/generate-chess.mjs
 
-          base: ""
-          plugin_chess: yes
-          plugin_chess_token: ${{ secrets.CHESS_TOKEN }}
-          plugin_chess_user: marwinwijaya
-          plugin_chess_platform: lichess.org
-
-          config_output: svg
-          config_display: regular
+      - name: Commit chess card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add metrics-chess.svg
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: update chess metrics"
+          git push
