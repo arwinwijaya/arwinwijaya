@@ -29,9 +29,6 @@ jobs:
           CHESS_TOKEN: ${{ secrets.CHESS_TOKEN }}
         run: node scripts/generate-chess.mjs
 
-      - name: Inspect generated chess card
-        run: head -n 40 metrics-chess.svg
-
       - name: Commit chess card
         run: |
           git config user.name "github-actions[bot]"
