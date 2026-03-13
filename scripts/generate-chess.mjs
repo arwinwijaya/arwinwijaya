@@ -23,55 +23,16 @@ function chunkMoves(moves, size = 8) {
   return lines;
 }
 
-function pieceShapes(piece) {
-  const stroke = "currentColor";
-  const common = `stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
-  const fill = piece.color === "w" ? "#f9fafb" : "#111827";
-  const color = piece.color === "w" ? "#111827" : "#f9fafb";
-  switch (piece.type) {
-    case "p":
-      return `<g color="${color}">
-  <circle cx="21" cy="16" r="6" fill="${fill}" ${common}/>
-  <path d="M14 32c1-6 3-9 7-9s6 3 7 9" fill="${fill}" ${common}/>
-  <path d="M12 36h18" ${common}/>
-</g>`;
-    case "r":
-      return `<g color="${color}">
-  <path d="M12 12h18v6H12z" fill="${fill}" ${common}/>
-  <path d="M14 18h14l-2 14H16z" fill="${fill}" ${common}/>
-  <path d="M11 36h20" ${common}/>
-</g>`;
-    case "n":
-      return `<g color="${color}">
-  <path d="M15 31c2-10 3-15 10-18 2 3 4 6 4 10 0 4-3 8-8 8H15z" fill="${fill}" ${common}/>
-  <circle cx="23" cy="18" r="1.5" fill="${color}" stroke="none"/>
-  <path d="M13 36h18" ${common}/>
-</g>`;
-    case "b":
-      return `<g color="${color}">
-  <circle cx="21" cy="12" r="3" fill="${fill}" ${common}/>
-  <path d="M21 16c6 4 8 9 8 14 0 3-3 5-8 5s-8-2-8-5c0-5 2-10 8-14z" fill="${fill}" ${common}/>
-  <path d="M17 22h8" ${common}/>
-  <path d="M13 36h16" ${common}/>
-</g>`;
-    case "q":
-      return `<g color="${color}">
-  <circle cx="12" cy="12" r="2.5" fill="${fill}" ${common}/>
-  <circle cx="21" cy="9" r="2.5" fill="${fill}" ${common}/>
-  <circle cx="30" cy="12" r="2.5" fill="${fill}" ${common}/>
-  <path d="M12 15l4 14h10l4-14-6 5-3-6-3 6z" fill="${fill}" ${common}/>
-  <path d="M13 34h16" ${common}/>
-</g>`;
-    case "k":
-      return `<g color="${color}">
-  <path d="M21 8v8" ${common}/>
-  <path d="M17 12h8" ${common}/>
-  <path d="M14 18h14l-2 13H16z" fill="${fill}" ${common}/>
-  <path d="M13 35h16" ${common}/>
-</g>`;
-    default:
-      return "";
-  }
+function pieceLabel(piece) {
+  const map = {
+    p: "P",
+    n: "N",
+    b: "B",
+    r: "R",
+    q: "Q",
+    k: "K",
+  };
+  return map[piece.type] || "?";
 }
 
 function boardStatesFromPgn(pgn) {
@@ -119,7 +80,13 @@ function renderBoard(states) {
         if (!piece) continue;
         const cx = boardX + file * square + 21;
         const cy = boardY + rank * square + 21;
-        pieces += `<g transform="translate(${cx - 21} ${cy - 21})">${pieceShapes(piece)}</g>`;
+        const fill = piece.color === "w" ? "#f8fafc" : "#0f172a";
+        const stroke = piece.color === "w" ? "#94a3b8" : "#e2e8f0";
+        const textFill = piece.color === "w" ? "#0f172a" : "#f8fafc";
+        pieces += `<g>
+  <circle cx="${cx}" cy="${cy}" r="15" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+  <text x="${cx}" y="${cy + 6}" text-anchor="middle" fill="${textFill}" font-size="16" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">${pieceLabel(piece)}</text>
+</g>`;
       }
     }
     const begin = (index * frameDuration).toFixed(2);
@@ -161,8 +128,8 @@ function renderSvg({ subtitle, summary, opening, moveLines, history, states, foo
     ...moveLines.slice(0, 3).map((line, index) => index === 0 ? `Recent SAN: ${line}` : `            ${line}`),
   ];
   const summarySvg = summaryText.map((line, index) => {
-    const y = 456 + index * 20;
-    return `<text x="32" y="${y}" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
+    const y = 474 + index * 18;
+    return `<text x="32" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n  ");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -177,7 +144,7 @@ function renderSvg({ subtitle, summary, opening, moveLines, history, states, foo
   ${renderBoard(states)}
   ${renderMoves(history)}
   ${summarySvg}
-  <text x="32" y="540" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(footer)}</text>
+  <text x="32" y="546" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(footer)}</text>
 </svg>
 `;
 }
