@@ -23,15 +23,15 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
 ## 📈 Activity
 **What it shows:** consistency and delivery cadence across projects.
 
-<table>
+<table align="center">
   <tr>
-    <td colspan="2"><img src="./metrics-activity.svg" alt="Activity Metrics" /></td>
+    <td colspan="2" align="center"><img src="./metrics-activity.svg" alt="Activity Metrics" /></td>
   </tr>
   <tr>
-    <td colspan="2"><img src="./metrics-organization.svg" alt="Organization Metrics" /></td>
+    <td colspan="2" align="center"><img src="./metrics-organization.svg" alt="Organization Metrics" /></td>
   </tr>
   <tr>
-    <td colspan="2"><img src="./metrics-people.svg" alt="People Metrics" /></td>
+    <td colspan="2" align="center"><img src="./metrics-people.svg" alt="People Metrics" /></td>
   </tr>
 </table>
 
