@@ -35,9 +35,13 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
   </tr>
 </table>
 
-![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=arwinwijaya&theme=tokyo-night&hide_border=true)
+<p align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=arwinwijaya&theme=tokyo-night&hide_border=true" alt="Activity Graph" />
+</p>
 
-![GitHub Streak](https://streak-stats.demolab.com?user=arwinwijaya&theme=tokyonight&hide_border=true)
+<p align="center">
+  <img src="https://streak-stats.demolab.com?user=arwinwijaya&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
+</p>
 
 ---
 
