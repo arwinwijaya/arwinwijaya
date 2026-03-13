@@ -43,3 +43,39 @@ jobs:
           # reduce size / avoid huge base64
           config_output: svg
           config_display: regular
+
+      - uses: lowlighter/metrics@v3.25
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_token: ${{ secrets.METRICS_TOKEN }}
+          committer_branch: main
+
+          user: arwinwijaya
+          template: classic
+          config_timezone: Asia/Jakarta
+
+          filename: metrics-classic.svg
+          output_action: commit
+
+          base: header, activity, community, repositories, metadata
+
+          config_output: svg
+          config_display: regular
+
+      - uses: lowlighter/metrics@v3.25
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_token: ${{ secrets.METRICS_TOKEN }}
+          committer_branch: main
+
+          user: GGF-Innovation-Team
+          template: classic
+          config_timezone: Asia/Jakarta
+
+          filename: metrics-organization.svg
+          output_action: commit
+
+          base: header, activity, community, repositories, metadata
+
+          config_output: svg
+          config_display: regular
