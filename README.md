@@ -1,7 +1,11 @@
-## Hi, I'm Muhamad Arwin Wijaya 👋
+<h1 align="center">Muhamad Arwin Wijaya</h1>
 
-**Solution Engineer Analyst at Great Giant Foods**  
-Building AI-driven web systems, cloud platforms, and automation to deliver real operational impact.
+<p align="center"><strong>Solution Engineer Analyst at Great Giant Foods</strong></p>
+
+<p align="center">
+  Building AI-driven web systems, cloud platforms, and automation
+  to deliver measurable operational impact.
+</p>
 
 ---
 
