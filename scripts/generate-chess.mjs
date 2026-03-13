@@ -23,6 +23,37 @@ function chunkMoves(moves, size = 8) {
   return lines;
 }
 
+function wrapText(text, maxChars = 52, maxLines = 3) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let current = "";
+
+  for (const word of words) {
+    const trial = current ? `${current} ${word}` : word;
+    if (trial.length <= maxChars) {
+      current = trial;
+    } else {
+      if (current) lines.push(current);
+      current = word;
+      if (lines.length >= maxLines) break;
+    }
+  }
+
+  if (current && lines.length < maxLines) {
+    lines.push(current);
+  }
+
+  if (words.length && lines.length === maxLines) {
+    const original = words.join(" ");
+    const rebuilt = lines.join(" ");
+    if (rebuilt.length < original.length) {
+      lines[maxLines - 1] = lines[maxLines - 1].replace(/\.*$/, "") + "...";
+    }
+  }
+
+  return lines;
+}
+
 function pieceLabel(piece) {
   const map = {
     p: "P",
@@ -89,9 +120,11 @@ function renderBoard(states) {
 </g>`;
       }
     }
+
     const begin = (index * frameDuration).toFixed(2);
     const dur = frameDuration.toFixed(2);
     const animationValues = index === frames.length - 1 ? "0;1;1" : "0;1;0";
+
     return `<g opacity="${index === 0 ? "1" : "0"}">
   ${pieces}
   <animate attributeName="opacity" values="${animationValues}" keyTimes="0;0.08;1" dur="${dur}s" begin="${begin}s" fill="freeze"/>
@@ -109,42 +142,58 @@ function renderBoard(states) {
 
 function renderMoves(history) {
   const moveRows = [];
-  for (let i = 0; i < history.length && moveRows.length < 6; i += 2) {
+  for (let i = 0; i < history.length && moveRows.length < 8; i += 2) {
     const turn = Math.floor(i / 2) + 1;
     const white = history[i] || "";
     const black = history[i + 1] || "";
     moveRows.push(`${turn}. ${white} ${black}`.trim());
   }
+
   return moveRows.map((line, index) => {
-    const y = 184 + index * 28;
-    return `<text x="410" y="${y}" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
+    const y = 184 + index * 30;
+    return `<text x="430" y="${y}" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
+  }).join("\n  ");
+}
+
+function renderSummary(summary, opening, moveLines) {
+  const lines = [
+    ...wrapText(summary, 58, 2),
+    ...wrapText(`Opening: ${opening}`, 58, 2),
+    ...wrapText(`Recent SAN: ${moveLines.join(" ")}`, 58, 3),
+  ].slice(0, 6);
+
+  return lines.map((line, index) => {
+    const y = 538 + index * 22;
+    return `<text x="32" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n  ");
 }
 
 function renderSvg({ subtitle, summary, opening, moveLines, history, states, footer, accent = "#2ea043" }) {
-  const summaryText = [
-    summary,
-    opening,
-    ...moveLines.slice(0, 3).map((line, index) => index === 0 ? `Recent SAN: ${line}` : `            ${line}`),
-  ];
-  const summarySvg = summaryText.map((line, index) => {
-    const y = 474 + index * 18;
-    return `<text x="32" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
-  }).join("\n  ");
-
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="560" viewBox="0 0 800 560" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="680" viewBox="0 0 800 680" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">${escapeHtml(subtitle)}</desc>
-  <rect width="800" height="560" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="558" rx="19" stroke="#30363d"/>
-  <rect x="24" y="24" width="8" height="512" rx="4" fill="${accent}"/>
-  <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Last Chess Game</text>
-  <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(subtitle)}</text>
+
+  <rect width="800" height="680" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="678" rx="19" stroke="#30363d"/>
+
+  <rect x="24" y="24" width="8" height="632" rx="4" fill="${accent}"/>
+
+  <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">
+    Last Chess Game
+  </text>
+  <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">
+    ${escapeHtml(subtitle)}
+  </text>
+
   ${renderBoard(states)}
   ${renderMoves(history)}
-  ${summarySvg}
-  <text x="32" y="546" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(footer)}</text>
+  ${renderSummary(summary, opening, moveLines)}
+
+  <line x1="32" y1="632" x2="768" y2="632" stroke="#30363d"/>
+  <text x="32" y="656" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
+    ${escapeHtml(footer)}
+  </text>
 </svg>
 `;
 }
@@ -154,7 +203,13 @@ function resultText(game, userLogin) {
   const black = game.players?.black?.user?.name || "Black";
   const winner = game.winner;
   const lower = userLogin.toLowerCase();
-  const userColor = white.toLowerCase() === lower ? "white" : black.toLowerCase() === lower ? "black" : null;
+  const userColor =
+    white.toLowerCase() === lower
+      ? "white"
+      : black.toLowerCase() === lower
+        ? "black"
+        : null;
+
   if (!userColor) return "Latest game found";
   if (!winner) return `Draw as ${userColor}`;
   return winner === userColor ? `Win as ${userColor}` : `Loss as ${userColor}`;
@@ -162,12 +217,16 @@ function resultText(game, userLogin) {
 
 async function fetchLatestGame() {
   const url = `https://lichess.org/api/games/user/${encodeURIComponent(user)}?max=1&tags=true&clocks=false&evals=false&opening=true&pgnInJson=true`;
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/x-ndjson",
-    },
-  });
+
+  const headers = {
+    Accept: "application/x-ndjson",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, { headers });
 
   if (!response.ok) {
     throw new Error(`Lichess API returned ${response.status}`);
@@ -175,30 +234,33 @@ async function fetchLatestGame() {
 
   const body = await response.text();
   const line = body.split("\n").find((entry) => entry.trim());
+
   if (!line) {
     throw new Error("No game data returned");
   }
 
   const game = JSON.parse(line);
+
   if (!game.pgn || typeof game.pgn !== "string") {
     throw new Error("PGN missing from Lichess response");
   }
+
   return game;
 }
 
 function renderFallback(message) {
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="240" viewBox="0 0 800 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="260" viewBox="0 0 800 260" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">Chess data unavailable</desc>
-  <rect width="800" height="240" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="238" rx="19" stroke="#30363d"/>
-  <rect x="24" y="24" width="8" height="192" rx="4" fill="#d29922"/>
+  <rect width="800" height="260" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="258" rx="19" stroke="#30363d"/>
+  <rect x="24" y="24" width="8" height="212" rx="4" fill="#d29922"/>
   <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Last Chess Game</text>
   <text x="52" y="100" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">Chess data is temporarily unavailable.</text>
   <text x="52" y="132" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">The README remains stable even if the API or token fails.</text>
   <text x="52" y="164" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">Check the Metrics (Chess) workflow logs for details.</text>
-  <text x="52" y="204" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(message)}</text>
+  <text x="52" y="208" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(message)}</text>
 </svg>
 `;
 }
@@ -206,14 +268,20 @@ function renderFallback(message) {
 async function main() {
   try {
     const game = await fetchLatestGame();
+
     const white = game.players?.white?.user?.name || "White";
     const black = game.players?.black?.user?.name || "Black";
     const whiteElo = game.players?.white?.rating ? ` (${game.players.white.rating})` : "";
     const blackElo = game.players?.black?.rating ? ` (${game.players.black.rating})` : "";
     const opening = game.opening?.name || "Opening unavailable";
+
     const { history, states } = boardStatesFromPgn(game.pgn);
     const moveLines = chunkMoves(game.moves || "");
-    const summary = `${resultText(game, user)} | ${game.speed || "unknown"} | ${game.variant || "standard"} | ${white}${whiteElo} vs ${black}${blackElo}`;
+
+    const summary =
+      `${resultText(game, user)} | ${game.speed || "unknown"} | ` +
+      `${game.variant || "standard"} | ${white}${whiteElo} vs ${black}${blackElo}`;
+
     const footer = `Status: ${game.status || "unknown"} | https://lichess.org/${game.id || ""}`;
 
     const svg = renderSvg({
@@ -225,9 +293,14 @@ async function main() {
       states,
       footer,
     });
+
     await fs.writeFile(output, svg, "utf8");
   } catch (error) {
-    await fs.writeFile(output, renderFallback(`Last update attempt failed: ${error.message}`), "utf8");
+    await fs.writeFile(
+      output,
+      renderFallback(`Last update attempt failed: ${error.message}`),
+      "utf8"
+    );
     process.exitCode = 0;
   }
 }
