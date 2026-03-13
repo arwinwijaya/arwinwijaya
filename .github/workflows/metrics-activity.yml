@@ -82,7 +82,7 @@ jobs:
           base: ""
           plugin_chess: yes
           plugin_chess_token: ${{ secrets.CHESS_TOKEN }}
-          plugin_chess_user: arwinwijaya
+          plugin_chess_user: marwinwijaya
           plugin_chess_platform: lichess.org
 
           config_output: svg
