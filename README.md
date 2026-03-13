@@ -31,6 +31,9 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
   <tr>
     <td colspan="2"><img src="./metrics-organization.svg" alt="Organization Metrics" /></td>
   </tr>
+  <tr>
+    <td colspan="2"><img src="./metrics-stargazers-worldmap.svg" alt="Stargazers World Map" /></td>
+  </tr>
 </table>
 
 ![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=arwinwijaya&theme=tokyo-night&hide_border=true)

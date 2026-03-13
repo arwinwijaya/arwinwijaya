@@ -62,6 +62,29 @@ jobs:
           config_output: svg
           config_display: regular
 
+      - uses: lowlighter/metrics@v3.34
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_token: ${{ secrets.METRICS_TOKEN }}
+          committer_branch: main
+
+          user: arwinwijaya
+          template: classic
+          config_timezone: Asia/Jakarta
+
+          filename: metrics-stargazers-worldmap.svg
+          output_action: commit
+
+          base: ""
+          plugin_stargazers: yes
+          plugin_stargazers_charts: no
+          plugin_stargazers_worldmap: yes
+          plugin_stargazers_worldmap_token: ${{ secrets.GOOGLE_MAP_TOKEN }}
+          plugin_stargazers_worldmap_sample: 200
+
+          config_output: svg
+          config_display: regular
+
       - uses: lowlighter/metrics@v3.25
         with:
           token: ${{ secrets.METRICS_TOKEN }}
