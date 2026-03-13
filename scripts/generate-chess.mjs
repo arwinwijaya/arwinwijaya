@@ -14,46 +14,6 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function chunkMoves(moves, size = 8) {
-  const tokens = String(moves).trim().split(/\s+/).filter(Boolean);
-  const lines = [];
-  for (let i = 0; i < tokens.length && lines.length < 6; i += size) {
-    lines.push(tokens.slice(i, i + size).join(" "));
-  }
-  return lines;
-}
-
-function wrapText(text, maxChars = 52, maxLines = 3) {
-  const words = String(text).split(/\s+/).filter(Boolean);
-  const lines = [];
-  let current = "";
-
-  for (const word of words) {
-    const trial = current ? `${current} ${word}` : word;
-    if (trial.length <= maxChars) {
-      current = trial;
-    } else {
-      if (current) lines.push(current);
-      current = word;
-      if (lines.length >= maxLines) break;
-    }
-  }
-
-  if (current && lines.length < maxLines) {
-    lines.push(current);
-  }
-
-  if (words.length && lines.length === maxLines) {
-    const original = words.join(" ");
-    const rebuilt = lines.join(" ");
-    if (rebuilt.length < original.length) {
-      lines[maxLines - 1] = lines[maxLines - 1].replace(/\.*$/, "") + "...";
-    }
-  }
-
-  return lines;
-}
-
 function pieceLabel(piece) {
   const map = {
     p: "P",
@@ -72,11 +32,53 @@ function boardStatesFromPgn(pgn) {
   const replay = new Chess();
   const history = parsed.history();
   const states = [replay.board()];
+
   for (const move of history) {
     replay.move(move);
     states.push(replay.board());
   }
+
   return { history, states };
+}
+
+function resultText(game, userLogin) {
+  const white = game.players?.white?.user?.name || "White";
+  const black = game.players?.black?.user?.name || "Black";
+  const winner = game.winner;
+  const lower = userLogin.toLowerCase();
+
+  const userColor =
+    white.toLowerCase() === lower
+      ? "white"
+      : black.toLowerCase() === lower
+        ? "black"
+        : null;
+
+  if (!userColor) return "Latest game found";
+  if (!winner) return `Draw as ${userColor}`;
+  return winner === userColor ? `Win as ${userColor}` : `Loss as ${userColor}`;
+}
+
+function renderResultBadge(resultLabel) {
+  let text = "DRAW";
+  let fill = "#d29922";
+
+  if (resultLabel.startsWith("Win")) {
+    text = "WIN";
+    fill = "#2ea043";
+  } else if (resultLabel.startsWith("Loss")) {
+    text = "LOSS";
+    fill = "#da3633";
+  }
+
+  const width = text === "DRAW" ? 84 : 78;
+  const x = 800 - width - 28;
+
+  return `
+  <g>
+    <rect x="${x}" y="28" width="${width}" height="34" rx="17" fill="${fill}"/>
+    <text x="${x + width / 2}" y="50" text-anchor="middle" fill="#f0f6fc" font-size="15" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">${text}</text>
+  </g>`;
 }
 
 function renderBoard(states) {
@@ -105,15 +107,18 @@ function renderBoard(states) {
 
   const layers = frames.map((state, index) => {
     let pieces = "";
+
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
         const piece = state[rank][file];
         if (!piece) continue;
+
         const cx = boardX + file * square + 21;
         const cy = boardY + rank * square + 21;
         const fill = piece.color === "w" ? "#f8fafc" : "#0f172a";
         const stroke = piece.color === "w" ? "#94a3b8" : "#e2e8f0";
         const textFill = piece.color === "w" ? "#0f172a" : "#f8fafc";
+
         pieces += `<g>
   <circle cx="${cx}" cy="${cy}" r="15" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
   <text x="${cx}" y="${cy + 6}" text-anchor="middle" fill="${textFill}" font-size="16" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">${pieceLabel(piece)}</text>
@@ -144,8 +149,8 @@ function renderMoves(history) {
   const containerX = 408;
   const containerY = 134;
   const containerWidth = 360;
-  const containerHeight = 356;
   const moveRows = [];
+
   for (let i = 0; i < history.length && moveRows.length < 10; i += 2) {
     const turn = Math.floor(i / 2) + 1;
     const white = history[i] || "";
@@ -153,8 +158,13 @@ function renderMoves(history) {
     moveRows.push(`${turn}. ${white} ${black}`.trim());
   }
 
+  const rowHeight = 26;
+  const headerHeight = 52;
+  const paddingBottom = 20;
+  const containerHeight = headerHeight + moveRows.length * rowHeight + paddingBottom;
+
   const rows = moveRows.map((line, index) => {
-    const y = containerY + 60 + index * 26;
+    const y = containerY + 60 + index * rowHeight;
     return `<text x="${containerX + 22}" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n    ");
 
@@ -167,51 +177,36 @@ function renderMoves(history) {
   </g>`;
 }
 
-function renderSummary(summary, opening, moveLines) {
-  const lines = [
-    ...wrapText(summary, 88, 2),
-    ...wrapText(`Opening: ${opening}`, 88, 2),
-    ...wrapText(`Recent SAN: ${moveLines.join(" ")}`, 88, 2),
-  ].slice(0, 5);
-
-  return lines.map((line, index) => {
-    const y = 564 + index * 22;
-    return `<text x="32" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
-  }).join("\n  ");
-}
-
-function renderResultBadge(resultLabel) {
-  let text = "DRAW";
-  let fill = "#d29922";
-
-  if (resultLabel.startsWith("Win")) {
-    text = "WIN";
-    fill = "#2ea043";
-  } else if (resultLabel.startsWith("Loss")) {
-    text = "LOSS";
-    fill = "#da3633";
-  }
-
-  const width = text === "DRAW" ? 84 : 78;
-  const x = 800 - width - 28;
-
+function renderSummary({ resultLabel, speed, variant, opening, players }) {
   return `
   <g>
-    <rect x="${x}" y="28" width="${width}" height="34" rx="17" fill="${fill}"/>
-    <text x="${x + width / 2}" y="50" text-anchor="middle" fill="#f0f6fc" font-size="15" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">${text}</text>
+    <text x="32" y="558" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(`${resultLabel} • ${speed} • ${variant}`)}</text>
+    <text x="32" y="584" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(`Opening: ${opening}`)}</text>
+    <text x="32" y="610" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(players)}</text>
   </g>`;
 }
 
-function renderSvg({ subtitle, summary, opening, moveLines, history, states, footer, resultLabel, accent = "#2ea043" }) {
+function renderSvg({
+  subtitle,
+  history,
+  states,
+  footer,
+  resultLabel,
+  speed,
+  variant,
+  opening,
+  players,
+  accent = "#2ea043",
+}) {
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="700" viewBox="0 0 800 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="720" viewBox="0 0 800 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">${escapeHtml(subtitle)}</desc>
 
-  <rect width="800" height="700" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="698" rx="19" stroke="#30363d"/>
+  <rect width="800" height="720" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="718" rx="19" stroke="#30363d"/>
 
-  <rect x="24" y="24" width="8" height="652" rx="4" fill="${accent}"/>
+  <rect x="24" y="24" width="8" height="672" rx="4" fill="${accent}"/>
 
   <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">
     Last Chess Game
@@ -219,35 +214,18 @@ function renderSvg({ subtitle, summary, opening, moveLines, history, states, foo
   <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">
     ${escapeHtml(subtitle)}
   </text>
-  ${renderResultBadge(resultLabel)}
 
+  ${renderResultBadge(resultLabel)}
   ${renderBoard(states)}
   ${renderMoves(history)}
-  ${renderSummary(summary, opening, moveLines)}
+  ${renderSummary({ resultLabel, speed, variant, opening, players })}
 
-  <line x1="32" y1="654" x2="768" y2="654" stroke="#30363d"/>
-  <text x="32" y="678" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
+  <line x1="32" y1="644" x2="768" y2="644" stroke="#30363d"/>
+  <text x="32" y="670" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
     ${escapeHtml(footer)}
   </text>
 </svg>
 `;
-}
-
-function resultText(game, userLogin) {
-  const white = game.players?.white?.user?.name || "White";
-  const black = game.players?.black?.user?.name || "Black";
-  const winner = game.winner;
-  const lower = userLogin.toLowerCase();
-  const userColor =
-    white.toLowerCase() === lower
-      ? "white"
-      : black.toLowerCase() === lower
-        ? "black"
-        : null;
-
-  if (!userColor) return "Latest game found";
-  if (!winner) return `Draw as ${userColor}`;
-  return winner === userColor ? `Win as ${userColor}` : `Loss as ${userColor}`;
 }
 
 async function fetchLatestGame() {
@@ -311,24 +289,23 @@ async function main() {
     const opening = game.opening?.name || "Opening unavailable";
 
     const { history, states } = boardStatesFromPgn(game.pgn);
-    const moveLines = chunkMoves(game.moves || "");
     const resultLabel = resultText(game, user);
 
-    const summary =
-      `${resultLabel} | ${game.speed || "unknown"} | ` +
-      `${game.variant || "standard"} | ${white}${whiteElo} vs ${black}${blackElo}`;
-
+    const speed = game.speed || "unknown";
+    const variant = game.variant || "standard";
+    const players = `${white}${whiteElo} vs ${black}${blackElo}`;
     const footer = `Status: ${game.status || "unknown"} | Game ID: ${game.id || "unknown"}`;
 
     const svg = renderSvg({
       subtitle: `Lichess profile: ${user}`,
-      summary,
-      opening,
-      moveLines,
       history,
       states,
       footer,
       resultLabel,
+      speed,
+      variant,
+      opening,
+      players,
     });
 
     await fs.writeFile(output, svg, "utf8");
