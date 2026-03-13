@@ -81,7 +81,7 @@ function boardStatesFromPgn(pgn) {
 
 function renderBoard(states) {
   const boardX = 32;
-  const boardY = 142;
+  const boardY = 144;
   const square = 42;
   const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
   const frames = states.slice(0, 14);
@@ -141,43 +141,77 @@ function renderBoard(states) {
 }
 
 function renderMoves(history) {
+  const containerX = 408;
+  const containerY = 134;
+  const containerWidth = 360;
+  const containerHeight = 356;
   const moveRows = [];
-  for (let i = 0; i < history.length && moveRows.length < 8; i += 2) {
+  for (let i = 0; i < history.length && moveRows.length < 10; i += 2) {
     const turn = Math.floor(i / 2) + 1;
     const white = history[i] || "";
     const black = history[i + 1] || "";
     moveRows.push(`${turn}. ${white} ${black}`.trim());
   }
 
-  return moveRows.map((line, index) => {
-    const y = 184 + index * 30;
-    return `<text x="430" y="${y}" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
-  }).join("\n  ");
+  const rows = moveRows.map((line, index) => {
+    const y = containerY + 60 + index * 26;
+    return `<text x="${containerX + 22}" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
+  }).join("\n    ");
+
+  return `
+  <g>
+    <rect x="${containerX}" y="${containerY}" width="${containerWidth}" height="${containerHeight}" rx="16" fill="#161b22" stroke="#30363d"/>
+    <text x="${containerX + 22}" y="${containerY + 32}" fill="#f0f6fc" font-size="20" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Moves</text>
+    <line x1="${containerX + 20}" y1="${containerY + 44}" x2="${containerX + containerWidth - 20}" y2="${containerY + 44}" stroke="#30363d"/>
+    ${rows}
+  </g>`;
 }
 
 function renderSummary(summary, opening, moveLines) {
   const lines = [
-    ...wrapText(summary, 58, 2),
-    ...wrapText(`Opening: ${opening}`, 58, 2),
-    ...wrapText(`Recent SAN: ${moveLines.join(" ")}`, 58, 3),
-  ].slice(0, 6);
+    ...wrapText(summary, 88, 2),
+    ...wrapText(`Opening: ${opening}`, 88, 2),
+    ...wrapText(`Recent SAN: ${moveLines.join(" ")}`, 88, 2),
+  ].slice(0, 5);
 
   return lines.map((line, index) => {
-    const y = 538 + index * 22;
+    const y = 564 + index * 22;
     return `<text x="32" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n  ");
 }
 
-function renderSvg({ subtitle, summary, opening, moveLines, history, states, footer, accent = "#2ea043" }) {
+function renderResultBadge(resultLabel) {
+  let text = "DRAW";
+  let fill = "#d29922";
+
+  if (resultLabel.startsWith("Win")) {
+    text = "WIN";
+    fill = "#2ea043";
+  } else if (resultLabel.startsWith("Loss")) {
+    text = "LOSS";
+    fill = "#da3633";
+  }
+
+  const width = text === "DRAW" ? 84 : 78;
+  const x = 800 - width - 28;
+
+  return `
+  <g>
+    <rect x="${x}" y="28" width="${width}" height="34" rx="17" fill="${fill}"/>
+    <text x="${x + width / 2}" y="50" text-anchor="middle" fill="#f0f6fc" font-size="15" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">${text}</text>
+  </g>`;
+}
+
+function renderSvg({ subtitle, summary, opening, moveLines, history, states, footer, resultLabel, accent = "#2ea043" }) {
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="680" viewBox="0 0 800 680" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="700" viewBox="0 0 800 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">${escapeHtml(subtitle)}</desc>
 
-  <rect width="800" height="680" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="678" rx="19" stroke="#30363d"/>
+  <rect width="800" height="700" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="698" rx="19" stroke="#30363d"/>
 
-  <rect x="24" y="24" width="8" height="632" rx="4" fill="${accent}"/>
+  <rect x="24" y="24" width="8" height="652" rx="4" fill="${accent}"/>
 
   <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">
     Last Chess Game
@@ -185,13 +219,14 @@ function renderSvg({ subtitle, summary, opening, moveLines, history, states, foo
   <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">
     ${escapeHtml(subtitle)}
   </text>
+  ${renderResultBadge(resultLabel)}
 
   ${renderBoard(states)}
   ${renderMoves(history)}
   ${renderSummary(summary, opening, moveLines)}
 
-  <line x1="32" y1="632" x2="768" y2="632" stroke="#30363d"/>
-  <text x="32" y="656" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
+  <line x1="32" y1="654" x2="768" y2="654" stroke="#30363d"/>
+  <text x="32" y="678" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
     ${escapeHtml(footer)}
   </text>
 </svg>
@@ -277,12 +312,13 @@ async function main() {
 
     const { history, states } = boardStatesFromPgn(game.pgn);
     const moveLines = chunkMoves(game.moves || "");
+    const resultLabel = resultText(game, user);
 
     const summary =
-      `${resultText(game, user)} | ${game.speed || "unknown"} | ` +
+      `${resultLabel} | ${game.speed || "unknown"} | ` +
       `${game.variant || "standard"} | ${white}${whiteElo} vs ${black}${blackElo}`;
 
-    const footer = `Status: ${game.status || "unknown"} | https://lichess.org/${game.id || ""}`;
+    const footer = `Status: ${game.status || "unknown"} | Game ID: ${game.id || "unknown"}`;
 
     const svg = renderSvg({
       subtitle: `Lichess profile: ${user}`,
@@ -292,6 +328,7 @@ async function main() {
       history,
       states,
       footer,
+      resultLabel,
     });
 
     await fs.writeFile(output, svg, "utf8");
