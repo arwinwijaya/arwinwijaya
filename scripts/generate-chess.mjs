@@ -158,15 +158,25 @@ function renderMoves(history) {
     moveRows.push(`${turn}. ${white} ${black}`.trim());
   }
 
+  const leftRows = moveRows.slice(0, 10);
+  const rightRows = moveRows.slice(10, 20);
+  const rowCount = Math.max(leftRows.length, rightRows.length, 1);
   const rowHeight = 24;
   const headerHeight = 52;
   const paddingBottom = 20;
-  const containerHeight = headerHeight + moveRows.length * rowHeight + paddingBottom;
+  const containerHeight = headerHeight + rowCount * rowHeight + paddingBottom;
+  const leftX = containerX + 22;
+  const rightX = containerX + 194;
 
-  const rows = moveRows.map((line, index) => {
+  const leftColumn = leftRows.map((line, index) => {
     const y = containerY + 60 + index * rowHeight;
-    return `<text x="${containerX + 22}" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
-  }).join("\n    ");
+    return `<text x="${leftX}" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
+  }).join("\n      ");
+
+  const rightColumn = rightRows.map((line, index) => {
+    const y = containerY + 60 + index * rowHeight;
+    return `<text x="${rightX}" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
+  }).join("\n      ");
 
   return {
     bottomY: containerY + containerHeight,
@@ -175,7 +185,9 @@ function renderMoves(history) {
       <rect x="${containerX}" y="${containerY}" width="${containerWidth}" height="${containerHeight}" rx="16" fill="#161b22" stroke="#30363d"/>
       <text x="${containerX + 22}" y="${containerY + 32}" fill="#f0f6fc" font-size="20" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Moves</text>
       <line x1="${containerX + 20}" y1="${containerY + 44}" x2="${containerX + containerWidth - 20}" y2="${containerY + 44}" stroke="#30363d"/>
-      ${rows}
+      <line x1="${containerX + 180}" y1="${containerY + 56}" x2="${containerX + 180}" y2="${containerY + containerHeight - 16}" stroke="#30363d"/>
+      ${leftColumn}
+      ${rightColumn}
     </g>`,
   };
 }
