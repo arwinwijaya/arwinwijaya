@@ -23,84 +23,55 @@ function chunkMoves(moves, size = 8) {
   return lines;
 }
 
-function pieceSymbolId(piece) {
-  return `piece-${piece.color}-${piece.type}`;
-}
-
-function pieceSymbols() {
+function pieceShapes(piece) {
   const stroke = "currentColor";
   const common = `stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
-  return `
-  <defs>
-    <g id="piece-w-p" color="#111827">
-      <circle cx="21" cy="16" r="6" fill="#f9fafb" ${common}/>
-      <path d="M14 32c1-6 3-9 7-9s6 3 7 9" fill="#f9fafb" ${common}/>
-      <path d="M12 36h18" ${common}/>
-    </g>
-    <g id="piece-b-p" color="#f9fafb">
-      <circle cx="21" cy="16" r="6" fill="#111827" ${common}/>
-      <path d="M14 32c1-6 3-9 7-9s6 3 7 9" fill="#111827" ${common}/>
-      <path d="M12 36h18" ${common}/>
-    </g>
-    <g id="piece-w-r" color="#111827">
-      <path d="M12 12h18v6H12z" fill="#f9fafb" ${common}/>
-      <path d="M14 18h14l-2 14H16z" fill="#f9fafb" ${common}/>
-      <path d="M11 36h20" ${common}/>
-    </g>
-    <g id="piece-b-r" color="#f9fafb">
-      <path d="M12 12h18v6H12z" fill="#111827" ${common}/>
-      <path d="M14 18h14l-2 14H16z" fill="#111827" ${common}/>
-      <path d="M11 36h20" ${common}/>
-    </g>
-    <g id="piece-w-n" color="#111827">
-      <path d="M15 31c2-10 3-15 10-18 2 3 4 6 4 10 0 4-3 8-8 8H15z" fill="#f9fafb" ${common}/>
-      <circle cx="23" cy="18" r="1.5" fill="#111827" stroke="none"/>
-      <path d="M13 36h18" ${common}/>
-    </g>
-    <g id="piece-b-n" color="#f9fafb">
-      <path d="M15 31c2-10 3-15 10-18 2 3 4 6 4 10 0 4-3 8-8 8H15z" fill="#111827" ${common}/>
-      <circle cx="23" cy="18" r="1.5" fill="#f9fafb" stroke="none"/>
-      <path d="M13 36h18" ${common}/>
-    </g>
-    <g id="piece-w-b" color="#111827">
-      <circle cx="21" cy="12" r="3" fill="#f9fafb" ${common}/>
-      <path d="M21 16c6 4 8 9 8 14 0 3-3 5-8 5s-8-2-8-5c0-5 2-10 8-14z" fill="#f9fafb" ${common}/>
-      <path d="M17 22h8" ${common}/>
-      <path d="M13 36h16" ${common}/>
-    </g>
-    <g id="piece-b-b" color="#f9fafb">
-      <circle cx="21" cy="12" r="3" fill="#111827" ${common}/>
-      <path d="M21 16c6 4 8 9 8 14 0 3-3 5-8 5s-8-2-8-5c0-5 2-10 8-14z" fill="#111827" ${common}/>
-      <path d="M17 22h8" ${common}/>
-      <path d="M13 36h16" ${common}/>
-    </g>
-    <g id="piece-w-q" color="#111827">
-      <circle cx="12" cy="12" r="2.5" fill="#f9fafb" ${common}/>
-      <circle cx="21" cy="9" r="2.5" fill="#f9fafb" ${common}/>
-      <circle cx="30" cy="12" r="2.5" fill="#f9fafb" ${common}/>
-      <path d="M12 15l4 14h10l4-14-6 5-3-6-3 6z" fill="#f9fafb" ${common}/>
-      <path d="M13 34h16" ${common}/>
-    </g>
-    <g id="piece-b-q" color="#f9fafb">
-      <circle cx="12" cy="12" r="2.5" fill="#111827" ${common}/>
-      <circle cx="21" cy="9" r="2.5" fill="#111827" ${common}/>
-      <circle cx="30" cy="12" r="2.5" fill="#111827" ${common}/>
-      <path d="M12 15l4 14h10l4-14-6 5-3-6-3 6z" fill="#111827" ${common}/>
-      <path d="M13 34h16" ${common}/>
-    </g>
-    <g id="piece-w-k" color="#111827">
-      <path d="M21 8v8" ${common}/>
-      <path d="M17 12h8" ${common}/>
-      <path d="M14 18h14l-2 13H16z" fill="#f9fafb" ${common}/>
-      <path d="M13 35h16" ${common}/>
-    </g>
-    <g id="piece-b-k" color="#f9fafb">
-      <path d="M21 8v8" ${common}/>
-      <path d="M17 12h8" ${common}/>
-      <path d="M14 18h14l-2 13H16z" fill="#111827" ${common}/>
-      <path d="M13 35h16" ${common}/>
-    </g>
-  </defs>`;
+  const fill = piece.color === "w" ? "#f9fafb" : "#111827";
+  const color = piece.color === "w" ? "#111827" : "#f9fafb";
+  switch (piece.type) {
+    case "p":
+      return `<g color="${color}">
+  <circle cx="21" cy="16" r="6" fill="${fill}" ${common}/>
+  <path d="M14 32c1-6 3-9 7-9s6 3 7 9" fill="${fill}" ${common}/>
+  <path d="M12 36h18" ${common}/>
+</g>`;
+    case "r":
+      return `<g color="${color}">
+  <path d="M12 12h18v6H12z" fill="${fill}" ${common}/>
+  <path d="M14 18h14l-2 14H16z" fill="${fill}" ${common}/>
+  <path d="M11 36h20" ${common}/>
+</g>`;
+    case "n":
+      return `<g color="${color}">
+  <path d="M15 31c2-10 3-15 10-18 2 3 4 6 4 10 0 4-3 8-8 8H15z" fill="${fill}" ${common}/>
+  <circle cx="23" cy="18" r="1.5" fill="${color}" stroke="none"/>
+  <path d="M13 36h18" ${common}/>
+</g>`;
+    case "b":
+      return `<g color="${color}">
+  <circle cx="21" cy="12" r="3" fill="${fill}" ${common}/>
+  <path d="M21 16c6 4 8 9 8 14 0 3-3 5-8 5s-8-2-8-5c0-5 2-10 8-14z" fill="${fill}" ${common}/>
+  <path d="M17 22h8" ${common}/>
+  <path d="M13 36h16" ${common}/>
+</g>`;
+    case "q":
+      return `<g color="${color}">
+  <circle cx="12" cy="12" r="2.5" fill="${fill}" ${common}/>
+  <circle cx="21" cy="9" r="2.5" fill="${fill}" ${common}/>
+  <circle cx="30" cy="12" r="2.5" fill="${fill}" ${common}/>
+  <path d="M12 15l4 14h10l4-14-6 5-3-6-3 6z" fill="${fill}" ${common}/>
+  <path d="M13 34h16" ${common}/>
+</g>`;
+    case "k":
+      return `<g color="${color}">
+  <path d="M21 8v8" ${common}/>
+  <path d="M17 12h8" ${common}/>
+  <path d="M14 18h14l-2 13H16z" fill="${fill}" ${common}/>
+  <path d="M13 35h16" ${common}/>
+</g>`;
+    default:
+      return "";
+  }
 }
 
 function boardStatesFromPgn(pgn) {
@@ -148,7 +119,7 @@ function renderBoard(states) {
         if (!piece) continue;
         const cx = boardX + file * square + 21;
         const cy = boardY + rank * square + 21;
-        pieces += `<use href="#${pieceSymbolId(piece)}" transform="translate(${cx - 21} ${cy - 21})"/>`;
+        pieces += `<g transform="translate(${cx - 21} ${cy - 21})">${pieceShapes(piece)}</g>`;
       }
     }
     const begin = (index * frameDuration).toFixed(2);
@@ -198,7 +169,6 @@ function renderSvg({ subtitle, summary, opening, moveLines, history, states, foo
 <svg width="800" height="560" viewBox="0 0 800 560" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">${escapeHtml(subtitle)}</desc>
-  ${pieceSymbols()}
   <rect width="800" height="560" rx="20" fill="#0d1117"/>
   <rect x="1" y="1" width="798" height="558" rx="19" stroke="#30363d"/>
   <rect x="24" y="24" width="8" height="512" rx="4" fill="${accent}"/>
