@@ -33,6 +33,9 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
   <tr>
     <td colspan="2" align="center"><img src="./metrics-people.svg" alt="People Metrics" /></td>
   </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="./metrics-chess.svg" alt="Chess Metrics" /></td>
+  </tr>
 </table>
 
 <p align="center">
