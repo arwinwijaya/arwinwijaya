@@ -50,7 +50,7 @@ function boardStatesFromPgn(pgn) {
 
 function renderBoard(states) {
   const boardX = 32;
-  const boardY = 84;
+  const boardY = 112;
   const square = 42;
   const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
   const frames = states.slice(0, 14);
@@ -116,7 +116,7 @@ function renderMoves(history) {
     moveRows.push(`${turn}. ${white} ${black}`.trim());
   }
   return moveRows.map((line, index) => {
-    const y = 126 + index * 28;
+    const y = 154 + index * 28;
     return `<text x="410" y="${y}" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n  ");
 }
@@ -128,23 +128,23 @@ function renderSvg({ subtitle, summary, opening, moveLines, history, states, foo
     ...moveLines.slice(0, 3).map((line, index) => index === 0 ? `Recent SAN: ${line}` : `            ${line}`),
   ];
   const summarySvg = summaryText.map((line, index) => {
-    const y = 398 + index * 24;
+    const y = 426 + index * 20;
     return `<text x="32" y="${y}" fill="#c9d1d9" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n  ");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="470" viewBox="0 0 800 470" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="520" viewBox="0 0 800 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">${escapeHtml(subtitle)}</desc>
-  <rect width="800" height="470" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="468" rx="19" stroke="#30363d"/>
-  <rect x="24" y="24" width="8" height="422" rx="4" fill="${accent}"/>
+  <rect width="800" height="520" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="518" rx="19" stroke="#30363d"/>
+  <rect x="24" y="24" width="8" height="472" rx="4" fill="${accent}"/>
   <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Last Chess Game</text>
   <text x="52" y="92" fill="#8b949e" font-size="18" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(subtitle)}</text>
   ${renderBoard(states)}
   ${renderMoves(history)}
   ${summarySvg}
-  <text x="32" y="446" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(footer)}</text>
+  <text x="32" y="500" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(footer)}</text>
 </svg>
 `;
 }
