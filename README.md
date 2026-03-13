@@ -23,9 +23,15 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
 ## 📈 Activity
 **What it shows:** consistency and delivery cadence across projects.
 
-![Activity Metrics](./metrics-activity.svg)
-![Classic Metrics](./metrics-classic.svg)
-![Organization Metrics](./metrics-organization.svg)
+<table>
+  <tr>
+    <td><img src="./metrics-activity.svg" alt="Activity Metrics" /></td>
+    <td><img src="./metrics-classic.svg" alt="Classic Metrics" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="./metrics-organization.svg" alt="Organization Metrics" /></td>
+  </tr>
+</table>
 
 ![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=arwinwijaya&theme=tokyo-night&hide_border=true)
 
