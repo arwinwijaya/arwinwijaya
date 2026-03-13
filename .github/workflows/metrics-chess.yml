@@ -22,12 +22,15 @@ jobs:
           node-version: "20"
 
       - name: Install chess dependencies
-        run: npm install chess.js
+        run: npm install --no-save chess.js
 
       - name: Generate chess card
         env:
           CHESS_TOKEN: ${{ secrets.CHESS_TOKEN }}
         run: node scripts/generate-chess.mjs
+
+      - name: Inspect generated chess card
+        run: head -n 40 metrics-chess.svg
 
       - name: Commit chess card
         run: |

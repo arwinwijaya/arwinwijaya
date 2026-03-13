@@ -15,7 +15,7 @@ function escapeHtml(value) {
 }
 
 function chunkMoves(moves, size = 10) {
-  const tokens = moves.trim().split(/\s+/).filter(Boolean);
+  const tokens = String(moves).trim().split(/\s+/).filter(Boolean);
   const lines = [];
   for (let i = 0; i < tokens.length && lines.length < 3; i += size) {
     lines.push(tokens.slice(i, i + size).join(" "));
@@ -25,20 +25,20 @@ function chunkMoves(moves, size = 10) {
 
 function pieceGlyph(piece) {
   const map = {
-    wp: "♙",
-    wn: "♘",
-    wb: "♗",
-    wr: "♖",
-    wq: "♕",
-    wk: "♔",
-    bp: "♟",
-    bn: "♞",
-    bb: "♝",
-    br: "♜",
-    bq: "♛",
-    bk: "♚",
+    wp: "\u2659",
+    wn: "\u2658",
+    wb: "\u2657",
+    wr: "\u2656",
+    wq: "\u2655",
+    wk: "\u2654",
+    bp: "\u265F",
+    bn: "\u265E",
+    bb: "\u265D",
+    br: "\u265C",
+    bq: "\u265B",
+    bk: "\u265A",
   };
-  return map[`${piece.color}${piece.type}`];
+  return map[`${piece.color}${piece.type}`] || "";
 }
 
 function boardStatesFromPgn(pgn) {
@@ -62,8 +62,6 @@ function renderAnimatedBoard(states, moves) {
   const totalSteps = Math.min(states.length, 13);
   const visibleStates = states.slice(0, totalSteps);
   const duration = Math.max(visibleStates.length * 1.8, 6);
-  const keyTimes = visibleStates.map((_, index) => (index / Math.max(visibleStates.length - 1, 1)).toFixed(4));
-  const values = visibleStates.map((_, index) => (index === visibleStates.length - 1 ? "1;1" : "1;0")).join(";");
 
   let squares = "";
   for (let rank = 0; rank < 8; rank++) {
@@ -90,9 +88,10 @@ function renderAnimatedBoard(states, moves) {
     }
     const start = (stateIndex / visibleStates.length) * duration;
     const displayDuration = duration / visibleStates.length;
+    const animationValues = stateIndex === visibleStates.length - 1 ? "0;1;1" : "0;1;0";
     return `<g opacity="${stateIndex === 0 ? "1" : "0"}">
   ${pieces}
-  <animate attributeName="opacity" values="${stateIndex === visibleStates.length - 1 ? "0;1;1" : "0;1;0"}" keyTimes="0;0.08;1" dur="${displayDuration.toFixed(2)}s" begin="${start.toFixed(2)}s" fill="freeze"/>
+  <animate attributeName="opacity" values="${animationValues}" keyTimes="0;0.08;1" dur="${displayDuration.toFixed(2)}s" begin="${start.toFixed(2)}s" fill="freeze"/>
 </g>`;
   }).join("\n");
 
@@ -150,12 +149,8 @@ function resultText(game, userLogin) {
   const winner = game.winner;
   const lower = userLogin.toLowerCase();
   const userColor = white.toLowerCase() === lower ? "white" : black.toLowerCase() === lower ? "black" : null;
-  if (!userColor) {
-    return "Latest game found";
-  }
-  if (!winner) {
-    return `Draw as ${userColor}`;
-  }
+  if (!userColor) return "Latest game found";
+  if (!winner) return `Draw as ${userColor}`;
   return winner === userColor ? `Win as ${userColor}` : `Loss as ${userColor}`;
 }
 
@@ -194,15 +189,17 @@ async function main() {
     const blackElo = game.players?.black?.rating ? ` (${game.players.black.rating})` : "";
     const opening = game.opening?.name || "Opening unavailable";
     const status = game.status || "unknown";
-    const moves = chunkMoves(game.moves || "");
-    const { moves: moveHistory, states } = boardStatesFromPgn(game.pgn);
-    const { board, moves: movesSvg } = renderAnimatedBoard(states, moveHistory);
+    const moveSummary = chunkMoves(game.moves || "");
+    const { moves, states } = boardStatesFromPgn(game.pgn);
+    const { board, moves: movesSvg } = renderAnimatedBoard(states, moves);
+
     const rows = [
       `${resultText(game, user)} | ${game.speed || "unknown"} | ${game.variant || "standard"}`,
       `${white}${whiteElo} vs ${black}${blackElo}`,
       `${opening}`,
-      ...moves.map((line, index) => index === 0 ? `Recent SAN: ${line}` : `            ${line}`),
+      ...moveSummary.map((line, index) => index === 0 ? `Recent SAN: ${line}` : `            ${line}`),
     ].slice(0, 4);
+
     const svg = renderCard({
       title: "Last Chess Game",
       subtitle: `Lichess profile: ${user}`,
