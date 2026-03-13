@@ -151,14 +151,14 @@ function renderMoves(history) {
   const containerWidth = 360;
   const moveRows = [];
 
-  for (let i = 0; i < history.length && moveRows.length < 10; i += 2) {
+  for (let i = 0; i < history.length && moveRows.length < 20; i += 2) {
     const turn = Math.floor(i / 2) + 1;
     const white = history[i] || "";
     const black = history[i + 1] || "";
     moveRows.push(`${turn}. ${white} ${black}`.trim());
   }
 
-  const rowHeight = 26;
+  const rowHeight = 24;
   const headerHeight = 52;
   const paddingBottom = 20;
   const containerHeight = headerHeight + moveRows.length * rowHeight + paddingBottom;
@@ -168,22 +168,28 @@ function renderMoves(history) {
     return `<text x="${containerX + 22}" y="${y}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(line)}</text>`;
   }).join("\n    ");
 
-  return `
-  <g>
-    <rect x="${containerX}" y="${containerY}" width="${containerWidth}" height="${containerHeight}" rx="16" fill="#161b22" stroke="#30363d"/>
-    <text x="${containerX + 22}" y="${containerY + 32}" fill="#f0f6fc" font-size="20" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Moves</text>
-    <line x1="${containerX + 20}" y1="${containerY + 44}" x2="${containerX + containerWidth - 20}" y2="${containerY + 44}" stroke="#30363d"/>
-    ${rows}
-  </g>`;
+  return {
+    bottomY: containerY + containerHeight,
+    svg: `
+    <g>
+      <rect x="${containerX}" y="${containerY}" width="${containerWidth}" height="${containerHeight}" rx="16" fill="#161b22" stroke="#30363d"/>
+      <text x="${containerX + 22}" y="${containerY + 32}" fill="#f0f6fc" font-size="20" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">Moves</text>
+      <line x1="${containerX + 20}" y1="${containerY + 44}" x2="${containerX + containerWidth - 20}" y2="${containerY + 44}" stroke="#30363d"/>
+      ${rows}
+    </g>`,
+  };
 }
 
-function renderSummary({ resultLabel, speed, variant, opening, players }) {
-  return `
-  <g>
-    <text x="32" y="558" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(`${resultLabel} • ${speed} • ${variant}`)}</text>
-    <text x="32" y="584" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(`Opening: ${opening}`)}</text>
-    <text x="32" y="610" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(players)}</text>
-  </g>`;
+function renderSummary({ resultLabel, speed, variant, opening, players, startY }) {
+  return {
+    bottomY: startY + 52,
+    svg: `
+    <g>
+      <text x="32" y="${startY}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(`${resultLabel} | ${speed} | ${variant}`)}</text>
+      <text x="32" y="${startY + 26}" fill="#c9d1d9" font-size="16" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(`Opening: ${opening}`)}</text>
+      <text x="32" y="${startY + 52}" fill="#8b949e" font-size="15" font-family="'Segoe UI', Arial, sans-serif">${escapeHtml(players)}</text>
+    </g>`,
+  };
 }
 
 function renderSvg({
@@ -198,15 +204,24 @@ function renderSvg({
   players,
   accent = "#2ea043",
 }) {
+  const moves = renderMoves(history);
+  const boardBottomY = 490;
+  const sectionBottomY = Math.max(boardBottomY, moves.bottomY);
+  const summaryStartY = sectionBottomY + 40;
+  const summary = renderSummary({ resultLabel, speed, variant, opening, players, startY: summaryStartY });
+  const dividerY = summary.bottomY + 34;
+  const footerY = dividerY + 26;
+  const svgHeight = footerY + 30;
+
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="800" height="720" viewBox="0 0 800 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="800" height="${svgHeight}" viewBox="0 0 800 ${svgHeight}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Last Chess Game</title>
   <desc id="desc">${escapeHtml(subtitle)}</desc>
 
-  <rect width="800" height="720" rx="20" fill="#0d1117"/>
-  <rect x="1" y="1" width="798" height="718" rx="19" stroke="#30363d"/>
+  <rect width="800" height="${svgHeight}" rx="20" fill="#0d1117"/>
+  <rect x="1" y="1" width="798" height="${svgHeight - 2}" rx="19" stroke="#30363d"/>
 
-  <rect x="24" y="24" width="8" height="672" rx="4" fill="${accent}"/>
+  <rect x="24" y="24" width="8" height="${svgHeight - 48}" rx="4" fill="${accent}"/>
 
   <text x="52" y="62" fill="#f0f6fc" font-size="30" font-weight="700" font-family="'Segoe UI', Arial, sans-serif">
     Last Chess Game
@@ -217,11 +232,11 @@ function renderSvg({
 
   ${renderResultBadge(resultLabel)}
   ${renderBoard(states)}
-  ${renderMoves(history)}
-  ${renderSummary({ resultLabel, speed, variant, opening, players })}
+  ${moves.svg}
+  ${summary.svg}
 
-  <line x1="32" y1="644" x2="768" y2="644" stroke="#30363d"/>
-  <text x="32" y="670" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
+  <line x1="32" y1="${dividerY}" x2="768" y2="${dividerY}" stroke="#30363d"/>
+  <text x="32" y="${footerY}" fill="#8b949e" font-size="14" font-family="'Segoe UI', Arial, sans-serif">
     ${escapeHtml(footer)}
   </text>
 </svg>
