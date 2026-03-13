@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install chess dependencies
+        run: npm install chess.js
+
       - name: Generate chess card
         env:
           CHESS_TOKEN: ${{ secrets.CHESS_TOKEN }}
