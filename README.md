@@ -61,11 +61,11 @@ Building AI-driven web systems, cloud platforms, and automation to deliver real 
 
 ```mermaid
 flowchart LR
-  A[Field Data Capture\nDrone / Mobile] --> B[Object Storage\nS3 / On-Prem]
-  B --> C[ETL & Processing\nPython Jobs]
-  C --> D[AI Inference\nModels & Services]
-  D --> E[Web Apps\nLaravel / Symfony]
-  E --> F[Dashboards & Reports\nBI / Export]
+  A[Field Data Capture<br/>Drone / Mobile] --> B[Object Storage<br/>S3 / On-Prem]
+  B --> C[ETL & Processing<br/>Python Jobs]
+  C --> D[AI Inference<br/>Models & Services]
+  D --> E[Web Apps<br/>Laravel / Symfony]
+  E --> F[Dashboards & Reports<br/>BI / Export]
   E --> G[Admin API & Integrations]
   C --> H[(Database)]
   E --> H
