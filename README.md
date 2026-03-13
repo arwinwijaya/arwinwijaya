@@ -7,6 +7,18 @@
   to deliver measurable operational impact.
 </p>
 
+<p align="center">
+  <a href="https://github.com/arwinwijaya/arwinwijaya/actions/workflows/metrics-activity.yml">
+    <img src="https://github.com/arwinwijaya/arwinwijaya/actions/workflows/metrics-activity.yml/badge.svg" alt="Metrics Activity Status" />
+  </a>
+  <a href="https://github.com/arwinwijaya/arwinwijaya/actions/workflows/metrics-chess.yml">
+    <img src="https://github.com/arwinwijaya/arwinwijaya/actions/workflows/metrics-chess.yml/badge.svg" alt="Metrics Chess Status" />
+  </a>
+  <a href="https://github.com/arwinwijaya/arwinwijaya/actions/workflows/metrics-languages.yml">
+    <img src="https://github.com/arwinwijaya/arwinwijaya/actions/workflows/metrics-languages.yml/badge.svg" alt="Metrics Languages Status" />
+  </a>
+</p>
+
 ---
 
 ## 📌 Highlights
